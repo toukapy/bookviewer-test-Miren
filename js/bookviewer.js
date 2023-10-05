@@ -34,8 +34,7 @@ export class BookViewer {
         // eta handleSearchData funtzioa exekutatu
         bilatu.onclick = () => {
             let iden = this.isbn.value;
-            let liburua_info = fetch(this.search_base+iden).then(resp => resp.json());
-            this.handleSearchData(liburua_info)
+            fetch(this.search_base+iden).then(resp => resp.json()).then(resp => this.handleSearchData(resp));
         }
         
     }
@@ -43,15 +42,19 @@ export class BookViewer {
     extractBookData = (book) => {
         // json objektu egoki bat bueltatu, zure webgunean erabili ahal izateko
         let info = {
-            'izenburua': 
+            "isbn":book['isbn'][0],
+            "egilea":book['author_name'],
+            "data":book['publish_date'][0],
+            "izenburua":book['title'],
+            "filename":book['cover_i'] + ".jpg"
         }
-        return null;
+        return info;
       };
       
     addBookToData = (book, data) => {
         // data array-ean sartu liburua, eta liburu berriaren posizioa bueltatu
         this.data.push(book)
-        return this.data.length;
+        return this.data.length-1;
     };
 
     handleSearchData = (data) => {
@@ -59,8 +62,9 @@ export class BookViewer {
         let liburua = data.docs[0];
         // extractBookData eta addBookToData funtzioak erabili, indizea berria lortuz
         let info = this.extractBookData(liburua);
-        this.index = addBookToData(data, data);
+        this.index = this.addBookToData(info, data);
         // updateView funtzioa erabili, liburu berria bistaratzeko
+        this.updateView();
     };
 
 
