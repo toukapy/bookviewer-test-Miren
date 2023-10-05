@@ -42,9 +42,8 @@ export class BookViewer {
     extractBookData = (book) => {
         // json objektu egoki bat bueltatu, zure webgunean erabili ahal izateko
         let info = {
-            "isbn":book['isbn'][0],
             "egilea":book['author_name'],
-            "data":book['publish_date'][0],
+            "data":book['publish_date'],
             "izenburua":book['title'],
             "filename":book['cover_i'] + ".jpg"
         }
@@ -53,6 +52,7 @@ export class BookViewer {
       
     addBookToData = (book, data) => {
         // data array-ean sartu liburua, eta liburu berriaren posizioa bueltatu
+        book['isbn'] = this.isbn.value;
         this.data.push(book)
         return this.data.length-1;
     };
@@ -73,19 +73,19 @@ export class BookViewer {
     updateView() {
         // liburuaren datu guztiak bistaratu
         // Irudia aldatu
-        this.irudia.src = this.base + this.data[((this.index % this.data.length)+this.data.length) % this.data.length].filename;
+        this.irudia.src = this.base + this.data[this.index].filename;
 
         // Izenburua idatzi
-        this.izenburua.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].izenburua;
+        this.izenburua.value = this.data[this.index].izenburua;
 
         // Egilea idatzi
-        this.egilea.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].egilea;
+        this.egilea.value = this.data[this.index].egilea;
 
         //ISBN idatzi
-        this.isbn.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].isbn;
+        this.isbn.value = this.data[this.index].isbn;
 
         // Data idatzi
-        this.dataElem.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].data;
+        this.dataElem.value = this.data[this.index].data;
         // liburu kopurua bistaratu
         this.liburuKopuru.innerText = this.data.length;
     }
@@ -93,14 +93,18 @@ export class BookViewer {
     nextBook() {
         // Hurrengo indizea lortu eta updateView funtzioa erabili bistaratzeko
         // ez ezazu liburu kopurua gainditu
-        this.index = this.index + 1
+        if(this.index < (this.data.length-1)){
+            this.index = this.index + 1;
+        }
         this.updateView();
     }
 
     prevBook() {
         // Aurreko indizea lortu eta updateView funtzioa erabili bistaratzeko
         // ez ezazu 0 indizea gainditu
-        this.index = this.index - 1
+        if(this.index > 0){
+            this.index = this.index - 1
+        }
         this.updateView();
     }
 }
