@@ -20,75 +20,83 @@ export class BookViewer {
     initButtons() {
         // aurrera, atzera eta bilatu botoiak hasieratu
         let botoia = document.querySelector("#aurrera");
+        botoia.onclick = () => {
+            this.nextBook();
+        }
         let atzera = document.querySelector("#atzera");
+        atzera.onclick = () => {
+            this.prevBook();
+        }
+
         let bilatu = document.querySelector("#bilatu");
 
         // bilatu botoia sakatzean, erabiltzaileak sartu duen isbn-a duen liburua lortu
         // eta handleSearchData funtzioa exekutatu
         bilatu.onclick = () => {
-            let iden = this.isbn.innerText;
-            let liburu_berria = fetch(this.search_base+iden).then(resp => resp.json())
-            this.handleSearchData(liburu_berria);
+            let iden = this.isbn.value;
+            let liburua_info = fetch(this.search_base+iden).then(resp => resp.json());
+            this.handleSearchData(liburua_info)
         }
         
     }
 
     extractBookData = (book) => {
         // json objektu egoki bat bueltatu, zure webgunean erabili ahal izateko
+        let info = {
+            'izenburua': 
+        }
         return null;
       };
       
     addBookToData = (book, data) => {
         // data array-ean sartu liburua, eta liburu berriaren posizioa bueltatu
         this.data.push(book)
-        this.liburuKopuru = this.liburuKopuru + 1;
         return this.data.length;
     };
 
     handleSearchData = (data) => {
         // lortu liburua data objektutik
+        let liburua = data.docs[0];
         // extractBookData eta addBookToData funtzioak erabili, indizea berria lortuz
+        let info = this.extractBookData(liburua);
         this.index = addBookToData(data, data);
         // updateView funtzioa erabili, liburu berria bistaratzeko
     };
 
 
-    
-    aldatu = () =>{
-        // Irudia aldatu
-        this.irudia.src = base + library[((index % library.length)+library.length) % library.length].filename;
 
-        // Izenburua idatzi
-        this.izenburu.value = library[((index % library.length)+library.length) % library.length].izenburua;
-
-        // Egilea idatzi
-        this.egile.value = library[((index % library.length)+library.length) % library.length].egilea;
-
-        //ISBN idatzi
-        this.isbn.value = library[((index % library.length)+library.length) % library.length].isbn;
-
-        // Data idatzi
-        this.data.value = library[((index % library.length)+library.length) % library.length].data;
-    }
 
     updateView() {
         // liburuaren datu guztiak bistaratu
-        this.aldatu();
+        // Irudia aldatu
+        this.irudia.src = this.base + this.data[((this.index % this.data.length)+this.data.length) % this.data.length].filename;
+
+        // Izenburua idatzi
+        this.izenburua.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].izenburua;
+
+        // Egilea idatzi
+        this.egilea.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].egilea;
+
+        //ISBN idatzi
+        this.isbn.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].isbn;
+
+        // Data idatzi
+        this.dataElem.value = this.data[((this.index % this.data.length)+this.data.length) % this.data.length].data;
         // liburu kopurua bistaratu
-        this.liburuKopuru = this.data.length
+        this.liburuKopuru.innerText = this.data.length;
     }
 
     nextBook() {
         // Hurrengo indizea lortu eta updateView funtzioa erabili bistaratzeko
         // ez ezazu liburu kopurua gainditu
-        index = index + 1
+        this.index = this.index + 1
         this.updateView();
     }
 
     prevBook() {
         // Aurreko indizea lortu eta updateView funtzioa erabili bistaratzeko
         // ez ezazu 0 indizea gainditu
-        index = index - 1
+        this.index = this.index - 1
         this.updateView();
     }
 }
